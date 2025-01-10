@@ -1,0 +1,17 @@
+{
+  "name": "kakaosync-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cafe" : "node test/cafe24/script.js",
+    "cafe-hide" : "node test/cafe24/script-hide.js",
+    "imweb" : "node test/imweb/script.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "playwright": "^1.49.1"
+  }
+}
