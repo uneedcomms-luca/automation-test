@@ -74,6 +74,29 @@ class KGSyncTest {
       this.report.addError("scriptName", e);
     }
   };
+  isKGScriptIncluded2 = async () => {
+    try {
+      const targetScripts = [`storage.keepgrow.com/admin/keepgrow-service`];
+
+      //files.smartskin.co.kr/kakaoSync/cafe24/mobile/kg_kakaoSync_mobile.js
+
+      const inCludescripts = await this.page.evaluate((targetScripts) => {
+        return targetScripts.every((scriptName) => {
+          const res = Array.from(document.querySelectorAll("script[src]"))
+            .map((script) => script.src) // src 속성 값 추출
+            .filter((src) => src.includes(scriptName));
+          return res.length > 0;
+        });
+      }, targetScripts);
+
+      if (!inCludescripts) {
+        this.report.addError("scriptName", "No matching scripts found.");
+      }
+    } catch (e) {
+      console.log("🔴", "no script in", this.url);
+      this.report.addError("scriptName", e);
+    }
+  };
 
   isKeepgrowElementPresent = async (type) => {
     try {
@@ -88,6 +111,7 @@ class KGSyncTest {
       }
       this.report.log("kgElement");
     } catch (e) {
+      console.log("🔴", "no KGElement in", type);
       this.report.addError("kgElement", e);
     }
   };

@@ -1,34 +1,4 @@
-const { chromium } = require("playwright");
-const data = require("./data.json");
-const fs = require("fs");
-
-let result = [];
-
-(async () => {
-  const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext();
-  const page = await context.newPage();
-
-  for (let url of data) {
-    try {
-      await testScript(page, url);
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  console.log("TEST END");
-  await browser.close();
-
-  // 결과 저장 (json)
-  result = result.length === 0 ? "SUCCESS" : result;
-  fs.writeFileSync(
-    `report/${new Date().toISOString().replace(/T/, " ").replace(/\..+/, "")}`,
-    JSON.stringify(result, null, 2)
-  );
-})();
-
-const testScript = async (page, url) => {
+const imwebTestScript = async (page, url, result) => {
   let errReport = new ErrorReport(url);
   // 1. 이동
   try {
@@ -97,3 +67,5 @@ class ErrorReport {
 
 // 로그인
 // 회원가입 페이지 - 캡쳐
+
+module.exports = { imwebTestScript };

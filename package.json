@@ -4,10 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "cafe" : "node test/cafe24/script.js",
-    "cafe-hide" : "node test/cafe24/script-hide.js",
-    "imweb" : "node test/imweb/script.js"
+    "cafe": "node test/cafe24/script.js",
+    "cafe-hide": "node test/cafe24/script-hide.js",
+    "imweb": "node test/imweb/script.js",
+    "test": "node test/init.js"
   },
   "author": "",
   "license": "ISC",

@@ -1,35 +1,7 @@
-const { chromium, devices } = require("playwright");
-const data = require("./data.json");
 const Report = require("../../utils/report");
 const KGSyncTest = require("../../utils/utils");
 
-let result = [];
-
-(async () => {
-  const mobile = devices["iPhone 12 Pro"];
-  const browser = await chromium.launch({ headless: false });
-  const context = await browser.newContext({
-    ...mobile
-  });
-  const page = await context.newPage();
-
-  for (let url of data) {
-    try {
-      await testScript(page, url);
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  await browser.close();
-
-  // 결과 저장 (json)
-  result = result.length === 0 ? "SUCCESS" : result;
-  Report.saveReport("cafe24", result);
-  console.log("TEST END");
-})();
-
-const testScript = async (page, url) => {
+const cafe24TestScript = async (page, url, result) => {
   // 1. 이동
   const report = new Report(url);
 
@@ -69,3 +41,5 @@ const testScript = async (page, url) => {
     result.push(report);
   }
 };
+
+module.exports = { cafe24TestScript };
