@@ -2,16 +2,23 @@
   "name": "kakaosync-test",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "cafe": "node test/cafe24/script.js",
-    "cafe-hide": "node test/cafe24/script-hide.js",
-    "imweb": "node test/imweb/script.js",
-    "test": "node test/init.js"
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "test": "ts-node src/test/_test.ts"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.4.7",
+    "ioredis": "^5.5.0",
     "playwright": "^1.49.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
   }
 }
