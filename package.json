@@ -2,11 +2,11 @@
   "name": "kakaosync-test",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/serviceScript.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts",
+    "start": "node dist/serviceScript.js",
+    "dev": "ts-node src/serviceScript.ts",
     "test": "ts-node src/test/_init_test.ts"
   },
   "author": "",

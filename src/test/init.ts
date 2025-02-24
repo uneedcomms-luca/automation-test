@@ -1,7 +1,7 @@
 import { chromium, devices } from "playwright";
 import BuildApi from "../utils/api/build";
 import { Report } from "../utils/report";
-import { testScript } from "./testScript";
+import { testByVendorKey } from "./testByVendorKey";
 
 const testInitScript = async (data: string[]) => {
   console.log("▶️ TEST START");
@@ -22,7 +22,7 @@ const testInitScript = async (data: string[]) => {
         continue;
       }
 
-      await testScript(serviceGroup.vendorKey, serviceGroup, testPage, report);
+      await testByVendorKey(serviceGroup.vendorKey, serviceGroup, testPage, report);
     } catch (e) {
       console.log(e);
     }

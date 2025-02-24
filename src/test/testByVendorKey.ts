@@ -4,7 +4,7 @@ import { SyncTest } from "../utils/sync-test";
 import { HostingType } from "../utils/types/hosting";
 import { ServiceGroup } from "../utils/types/serviceGroup";
 
-export const testScript = async (hosting: HostingType, serviceGroup: ServiceGroup, testPage: any, report: Report) => {
+export const testByVendorKey = async (hosting: HostingType, serviceGroup: ServiceGroup, testPage: any, report: Report) => {
   console.log("🚀 ", serviceGroup.idx, `번 ${hosting} 테스트 시작`);
 
   const test = new SyncTest({ serviceGroup, testPage });

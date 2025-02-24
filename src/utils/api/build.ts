@@ -1,5 +1,5 @@
+import { TestSetting } from "../../_setting";
 import { ServiceGroup } from "../types/serviceGroup";
-import { HostingType } from "../types/hosting";
 
 require("dotenv").config();
 
@@ -8,14 +8,11 @@ const ROOT_URL = "http://admin-supporter.keepgrow.com/admin-supporter/api/keepgr
 const TOKEN = process.env.KG_TOKEN;
 
 const BuildApi = {
-  // {batchId : 'keepgrowservice:test:build:75ab276e-fcc1-4d95-8d7c-204a0112baad'}
-
   /**
    * 일괄 빌드 대상자 생성 요청
    * return batchId
    */
   postBuilds: async () => {
-    return "keepgrowservice:test:build:75ab276e-fcc1-4d95-8d7c-204a0112baad";
     try {
       const response = await fetch(ROOT_URL + "/test/build/batch/request", {
         method: "POST",
@@ -24,7 +21,8 @@ const BuildApi = {
           Authorization: `Bearer ${TOKEN}`
         }
       });
-      return (await response.json()).data.batchId;
+      const res = await response.json();
+      return res.data?.batchId;
     } catch (e) {
       throw e;
     }
@@ -44,7 +42,9 @@ const BuildApi = {
           Authorization: `Bearer ${TOKEN}`
         }
       });
-      return (await response.json()).data.progressCount === 0;
+      const res = await response.json();
+
+      return res?.data && res.data?.progressCount === 0;
     } catch (e) {
       throw e;
     }
@@ -59,15 +59,17 @@ const BuildApi = {
    * serviceGroupIdxs : [1,2,3,4,5,6,7,8,9,10]
    */
   batchRequest: async (batchId: string) => {
+    console.log(batchId);
     try {
-      const response = await fetch(ROOT_URL + `/build/batch/progress?batchId=${batchId}&size=10`, {
+      const response = await fetch(ROOT_URL + `/build/batch/progress?batchId=${batchId}&size=${TestSetting.size}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${TOKEN}`
         }
       });
-      return (await response.json()).data.serviceGroupIdxs;
+      const res = await response.json();
+      return res?.data?.serviceGroupIdxs || [];
     } catch (e) {
       throw e;
     }

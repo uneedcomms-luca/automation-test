@@ -18,7 +18,6 @@ redis.on("error", (err: any) => {
 async function getRedisValue(key: string) {
   try {
     const value = await redis.smembers(key);
-    console.log(value);
     return value;
   } catch (err) {
     console.error("❌ Redis 조회 오류:", err);

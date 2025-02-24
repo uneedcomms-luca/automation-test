@@ -1,3 +1,4 @@
+import { TestSetting } from "../_setting";
 import { ErrorData } from "./types/error-data";
 import { ServiceGroup } from "./types/serviceGroup";
 
@@ -42,7 +43,7 @@ export class Report {
   };
 
   saveReport = () => {
-    const dirPath = `report/${time}`;
+    const dirPath = `report/${TestSetting.date}`;
 
     // 디렉터리가 없으면 생성
     if (!fs.existsSync(dirPath)) {
@@ -77,6 +78,7 @@ export class ReportData {
   };
 
   getScreenShotPath = () => {
-    return `report/${time}/screenshot/${this.serviceGroup.vendorKey}/${this.serviceGroup.idx}-${this.page}.png`;
+    return `./report/${TestSetting.date}/${this.serviceGroup.vendorKey}/${this.serviceGroup.idx}-${this.page}.png`;
+    // return `report/${time}/screenshot/${this.serviceGroup.vendorKey}/${this.serviceGroup.idx}-${this.page}.png`;
   };
 }
