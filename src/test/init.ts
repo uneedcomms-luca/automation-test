@@ -8,7 +8,7 @@ const testInitScript = async (data: string[]) => {
 
   const report = new Report();
 
-  const browser = await chromium.launch({ headless: false });
+  const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({ ...devices["iPhone 12 Pro"] });
   const testPage = await context.newPage();
 
