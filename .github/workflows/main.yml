@@ -40,8 +40,8 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm install
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+      # - name: Install Playwright Browsers
+      #  run: npx playwright install --with-deps
 
       - name: Run tests
         run: |
