@@ -1,6 +1,6 @@
-import { Report } from "../utils/report";
-import { SyncTest } from "../utils/sync-test";
-import { ServiceGroup } from "../utils/types/serviceGroup";
+import { Report } from "../../utils/report";
+import { SyncTest } from "../../utils/sync-test";
+import { ServiceGroup } from "../../utils/types/serviceGroup";
 
 export const cafe24TestScript = async (serviceGroup: ServiceGroup, testPage: any, report: Report) => {
   console.log("🚀 ", serviceGroup.idx, "번 CAFE24 테스트 시작");

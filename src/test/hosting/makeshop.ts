@@ -1,9 +1,9 @@
-import { Report } from "../utils/report";
-import { SyncTest } from "../utils/sync-test";
-import { ServiceGroup } from "../utils/types/serviceGroup";
+import { Report } from "../../utils/report";
+import { SyncTest } from "../../utils/sync-test";
+import { ServiceGroup } from "../../utils/types/serviceGroup";
 
-export const imwebTestScript = async (serviceGroup: ServiceGroup, testPage: any, report: Report) => {
-  console.log("🚀 ", serviceGroup.idx, "번 IMWEB 테스트 시작");
+export const makeshopTestScript = async (serviceGroup: ServiceGroup, testPage: any, report: Report) => {
+  console.log("🚀 ", serviceGroup.idx, "번 MAKESHOP 테스트 시작");
 
   const test = new SyncTest({
     serviceGroup,
@@ -20,7 +20,8 @@ export const imwebTestScript = async (serviceGroup: ServiceGroup, testPage: any,
 const loginTest = async (test: SyncTest) => {
   test.setTestType("login");
   // 1. 로그인 페이지 이동 및 스크린샷
-  await test.navigate("/login");
+  await test.navigate("/m/login.html");
+//   await test.navigate("/shop/member.html");
   await test.screenshot();
 
   // 2. 스크립트 삽입 확인 -> 없으면 끝
@@ -41,7 +42,8 @@ const loginTest = async (test: SyncTest) => {
 
 const signupTest = async (test: SyncTest) => {
   test.setTestType("signup");
-  await test.navigate("/site_join_type_choice");
+  await test.navigate("/m/join_contract.html");
+//   await test.navigate("/shop/idinfo.html");
   await test.screenshot();
 
   const isKgElement = await test.isKeepgrowElementPresentNoReport("signup");
