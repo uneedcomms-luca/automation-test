@@ -1,4 +1,4 @@
-name: Run Playwright Tests with Screenshots
+name: Test Script
 
 on:
   push:
