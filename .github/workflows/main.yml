@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -46,7 +46,7 @@ jobs:
         working-directory: ./
 
       - name: Upload Screenshot as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: report
           path: ./report/*
