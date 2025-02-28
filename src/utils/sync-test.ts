@@ -1,4 +1,4 @@
-import { ReportData } from "./report";
+import { ReportData } from "./report/reportData";
 import { ServiceGroup } from "./types/serviceGroup";
 
 export class SyncTest {
@@ -6,18 +6,21 @@ export class SyncTest {
   reportData: ReportData;
   page: any;
   type?: "login" | "signup";
+  env?: "mobile" | "pc";
 
   testParams: { init: boolean; default: boolean } = { init: false, default: false };
 
-  constructor({ serviceGroup, testPage }: { serviceGroup: ServiceGroup; testPage: any }) {
+  constructor({ serviceGroup, testPage, env }: { serviceGroup: ServiceGroup; testPage: any; env: "mobile" | "pc" }) {
     this.serviceGroup = serviceGroup;
-    this.reportData = new ReportData(serviceGroup);
+    this.reportData = new ReportData(serviceGroup, env);
     this.page = testPage;
+    this.env = env;
   }
 
   setTestParams = (initParam: boolean, defaultParam: boolean) => {
     this.testParams = { init: initParam, default: defaultParam };
   };
+
   setTestType = (type: "login" | "signup") => {
     this.type = type;
     this.reportData.setTestPage(type);

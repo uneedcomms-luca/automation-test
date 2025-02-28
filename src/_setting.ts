@@ -1,10 +1,11 @@
 export const TestSetting: TestSettingType = {
-  date: "2025-02-23",
-  size: 10,
-  batchId: "keepgrowservice:test:build:b422bc11-f582-4482-a1d7-1fa14c78b532"
+  // 2025-02-25
+  date: new Date().toISOString().split("T")[0],
+  size: 5,
+  batchId: "keepgrowservice:test:build:1dc70a8e-88f9-4190-bb5c-90742e2cdfbf"
 };
 interface TestSettingType {
   date: string;
   size: number;
-  batchId: string | null;
+  batchId?: string;
 }

@@ -1,6 +1,6 @@
 import { chromium, devices } from "playwright";
 import BuildApi from "../utils/api/build";
-import { Report } from "../utils/report";
+import { Report } from "../utils/report/report";
 import { testByVendorKey } from "./testByVendorKey";
 
 const testInitScript = async (data: string[]) => {
@@ -8,9 +8,13 @@ const testInitScript = async (data: string[]) => {
 
   const report = new Report();
 
-  const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext({ ...devices["iPhone 12 Pro"] });
-  const testPage = await context.newPage();
+  const browser = await chromium.launch({ headless: false });
+
+  const mobileContext = await browser.newContext({ ...devices["iPhone 12 Pro"] });
+  const pcContext = await browser.newContext();
+
+  const mobileTestPage = await mobileContext.newPage();
+  const pcTestPage = await pcContext.newPage();
 
   for (let idx of data) {
     try {
@@ -22,7 +26,24 @@ const testInitScript = async (data: string[]) => {
         continue;
       }
 
-      await testByVendorKey(serviceGroup.vendorKey, serviceGroup, testPage, report);
+      console.log(`📲 ${idx}번 모바일 환경 테스트`);
+
+      await testByVendorKey({
+        vendorKey: serviceGroup.vendorKey,
+        serviceGroup,
+        testPage: mobileTestPage,
+        report,
+        env: "mobile"
+      });
+
+      console.log(`💻 ${idx}번 PC 환경 테스트`);
+      await testByVendorKey({
+        vendorKey: serviceGroup.vendorKey,
+        serviceGroup,
+        testPage: pcTestPage,
+        report,
+        env: "pc"
+      });
     } catch (e) {
       console.log(e);
     }

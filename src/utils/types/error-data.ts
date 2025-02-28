@@ -2,6 +2,7 @@ export class ErrorData {
   type: string;
   message: any;
   page?: "index" | "login" | "signup" = "index";
+  env: "mobile" | "pc" = "mobile";
 
   constructor(type: string, message: any, page?: "login" | "signup") {
     this.type = type;

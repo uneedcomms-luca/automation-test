@@ -10,6 +10,7 @@ export const HOSTING_URL = {
   },
   IMWEB: {
     login: "/login",
-    signup: "/join"
+    // signup: "/join"
+    signup: "/site_join_type_choice"
   }
 };
