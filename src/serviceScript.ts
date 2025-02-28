@@ -1,5 +1,5 @@
 import { TestSetting } from "./_setting";
-import testInitScript from "./test/init";
+import testInitScript from "./script/init";
 import BuildApi from "./utils/api/build";
 import callUntilResponse from "./utils/api/fetch";
 
@@ -7,7 +7,7 @@ const excute = async () => {
   // 세팅 값에 있다면 그 값을 사용, 없다면 BuildApi.postBuilds()를 호출하여 batchId 가져옴
   const batchId = TestSetting.batchId || (await BuildApi.postBuilds());
   if (!batchId) {
-    console.log("🔴 batchId 없음", batchId);
+    console.log("🔴 no batchId", batchId);
     return;
   }
   console.log("✅ BATCHID =", batchId);
@@ -18,7 +18,7 @@ const excute = async () => {
     console.log("🔴 serviceGroups 없음");
     return;
   }
-  console.log("✅ batch request 목록 = ", serviceGroups);
+  console.log("✅ batch request list = ", serviceGroups);
 
   const checkbuildProgressFinish = await callUntilResponse(() => BuildApi.checkbuildProgressFinish(batchId));
 

@@ -1,7 +1,7 @@
 import { Page } from "playwright";
-import { ReportData } from "./report/reportData";
-import { ServiceGroup } from "./types/serviceGroup";
-import { EnvType, TestPageType } from "./types/constants";
+import { ReportData } from "../utils/report/reportData";
+import { ServiceGroup } from "../utils/types/serviceGroup";
+import { EnvType, TestPageType } from "../utils/constants";
 
 export class SyncTest {
   serviceGroup: ServiceGroup;
@@ -126,22 +126,20 @@ export class SyncTest {
     this.reportData.log("kgElement");
     try {
       const element = await this.playwright.waitForSelector("#KG_section", { timeout: 5000 });
-      // const isElementPresent = (await this.playwright.$("#KG_section")) !== null;
-      if (element) return true;
-      this.reportData.addError("kgElement", "No matching elements found.");
+      if (!!element) return true;
+      this.reportData.addError("kgElement", "Elements Not found.");
     } catch (e) {
-      console.log("🔴", "no KGElement");
-      this.reportData.addError("kgElement", e);
+      this.reportData.addError("kgElement", "Elements Not found.");
     }
   };
   isFooterPresent = async () => {
     this.reportData.log("footer");
     try {
-      const element = await this.playwright.waitForSelector("#KG_footer", { timeout: 5000 });
+      const element = !!(await this.playwright.waitForSelector("#KG_footer", { timeout: 5000 }));
       if (element) return true;
-      this.reportData.addError("footer", "No matching elements found.");
+      this.reportData.addError("footer", "Elements Not found.");
     } catch (e) {
-      this.reportData.addError("footer", e);
+      this.reportData.addError("footer", "Elements Not found.");
     }
   };
 
@@ -201,9 +199,7 @@ export class SyncTest {
         kakaoLoginSelector = "#kakaoLogin > div > a.btn.btnKakao";
       }
 
-      // await this.playwright.waitForSelector(kakaoLoginSelector);
-
-      await this.playwright.click(kakaoLoginSelector);
+      await this.playwright.click(kakaoLoginSelector, { timeout: 3000 });
       await this.playwright.waitForLoadState("networkidle");
 
       const currentUrl = this.playwright.url();
@@ -219,13 +215,9 @@ export class SyncTest {
   isNoMemberLinkPresent = async () => {
     try {
       this.reportData.log("noMemberLink");
-      const noMemberLinkSelector = "a:text('비회원 구매')";
-      const element = await this.playwright.waitForSelector(noMemberLinkSelector, { timeout: 5000 });
-      console.log("🟢", "noMemberLink", element);
-      if (!element) {
-        this.reportData.addError("noMemberLink", "No matching elements found.");
-      }
-      return true;
+      const element = !!(await this.playwright.waitForSelector("a:text('비회원 구매')", { timeout: 5000 }));
+      if (element) return true;
+      this.reportData.addError("noMemberLink", "No matching elements found.");
     } catch (e: unknown | any) {
       this.reportData.addError("noMemberLink", e?.name || e);
     }

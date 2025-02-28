@@ -1,6 +1,6 @@
+import { HostingType } from "../../utils/constants";
 import { HOSTING_URL } from "../../utils/hosting-data";
-import { SyncTest } from "../../utils/sync-test";
-import { HostingType } from "../../utils/types/hosting";
+import { SyncTest } from "../sync-test";
 
 export const signupTest = async (hosting: HostingType, test: SyncTest) => {
   test.setTestPage("signup");

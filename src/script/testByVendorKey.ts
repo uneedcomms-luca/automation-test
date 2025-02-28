@@ -1,17 +1,17 @@
 import { Page } from "playwright";
 import { Report } from "../utils/report/report";
-import { SyncTest } from "../utils/sync-test";
-import { HostingType } from "../utils/types/hosting";
+import { SyncTest } from "./sync-test";
 import { ServiceGroup } from "../utils/types/serviceGroup";
 import { loginTest } from "./page/login";
 import { signupTest } from "./page/signup";
+import { EnvType, HostingType } from "../utils/constants";
 
 interface TestSettingParams {
   vendorKey: HostingType;
   serviceGroup: ServiceGroup;
   playwright: Page;
   report: Report;
-  env: "mobile" | "pc";
+  env: EnvType;
 }
 
 export const testByVendorKey = async (params: TestSettingParams) => {

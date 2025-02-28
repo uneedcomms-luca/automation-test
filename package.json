@@ -5,9 +5,9 @@
   "main": "dist/serviceScript.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/serviceScript.js",
-    "dev": "ts-node src/serviceScript.ts",
-    "test": "ts-node src/test/_init_test.ts"
+    "start2": "node dist/serviceScript.js",
+    "start": "ts-node src/serviceScript.ts",
+    "test": "ts-node src/script/_init_test.ts"
   },
   "author": "",
   "license": "ISC",

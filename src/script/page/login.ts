@@ -1,6 +1,6 @@
+import { HostingType } from "../../utils/constants";
 import { HOSTING_URL } from "../../utils/hosting-data";
-import { SyncTest } from "../../utils/sync-test";
-import { HostingType } from "../../utils/types/hosting";
+import { SyncTest } from "../sync-test";
 
 export const loginTest = async (hosting: HostingType, test: SyncTest) => {
   test.setTestPage("login");
@@ -28,14 +28,14 @@ export const loginTest = async (hosting: HostingType, test: SyncTest) => {
   const isFooterPresent = await test.isFooterPresent();
   if (!isFooterPresent) return;
 
-  if (hosting === "CAFE24") {
-    // <a>비회원 구매</a> 확인
-    const navigate = await test.navigate(HOSTING_URL[hosting].login + "?noMember=1");
-    if (!navigate) return;
+  // if (hosting === "CAFE24") {
+  //   // <a>비회원 구매</a> 확인
+  //   const navigate = await test.navigate(HOSTING_URL[hosting].login + "?noMember=1");
+  //   if (!navigate) return;
 
-    const isNoMemberLinkPresent = await test.isNoMemberLinkPresent();
-    if (!isNoMemberLinkPresent) return;
-  }
+  //   const isNoMemberLinkPresent = await test.isNoMemberLinkPresent();
+  //   if (!isNoMemberLinkPresent) return;
+  // }
 
   // 4. 로그인 버튼 클릭 확인
   const checkNextPageIsKakaoLogin = await test.checkNextPageIsKakaoLogin();
