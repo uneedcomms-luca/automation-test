@@ -76,7 +76,7 @@ const BuildApi = {
   },
 
   // { vendorKey: 'CAFE24', KGJS_domain: 'pinkparfait.com' }
-  getServiceGroup: async (serviceGroupIdx: string): Promise<ServiceGroup> => {
+  getServiceGroup: async (serviceGroupIdx: string | number): Promise<ServiceGroup> => {
     try {
       const response = await fetch(
         `http://admin-supporter.keepgrow.com/admin-supporter/api/keepgrow-service/service-groups/${serviceGroupIdx}/kakaosync/mall`,

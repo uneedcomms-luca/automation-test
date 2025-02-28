@@ -2,7 +2,6 @@ import { TestSetting } from "./_setting";
 import testInitScript from "./test/init";
 import BuildApi from "./utils/api/build";
 import callUntilResponse from "./utils/api/fetch";
-// import { getRedisValue } from "./utils/api/redis";
 
 const excute = async () => {
   // 세팅 값에 있다면 그 값을 사용, 없다면 BuildApi.postBuilds()를 호출하여 batchId 가져옴

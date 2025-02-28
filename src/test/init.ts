@@ -3,14 +3,14 @@ import BuildApi from "../utils/api/build";
 import { Report } from "../utils/report/report";
 import { testByVendorKey } from "./testByVendorKey";
 
-const testInitScript = async (data: string[]) => {
+const testInitScript = async (data: string | number[]) => {
   console.log("▶️ TEST START");
 
   const report = new Report();
 
   const browser = await chromium.launch({ headless: false });
 
-  const mobileContext = await browser.newContext({ ...devices["iPhone 12 Pro"] });
+  const mobileContext = await browser.newContext({ ...devices["iPhone 14 Pro"] });
   const pcContext = await browser.newContext();
 
   const mobileTestPage = await mobileContext.newPage();
@@ -31,7 +31,7 @@ const testInitScript = async (data: string[]) => {
       await testByVendorKey({
         vendorKey: serviceGroup.vendorKey,
         serviceGroup,
-        testPage: mobileTestPage,
+        playwright: mobileTestPage,
         report,
         env: "mobile"
       });
@@ -40,7 +40,7 @@ const testInitScript = async (data: string[]) => {
       await testByVendorKey({
         vendorKey: serviceGroup.vendorKey,
         serviceGroup,
-        testPage: pcTestPage,
+        playwright: pcTestPage,
         report,
         env: "pc"
       });

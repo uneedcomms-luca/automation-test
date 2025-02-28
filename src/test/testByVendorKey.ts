@@ -1,3 +1,4 @@
+import { Page } from "playwright";
 import { Report } from "../utils/report/report";
 import { SyncTest } from "../utils/sync-test";
 import { HostingType } from "../utils/types/hosting";
@@ -8,16 +9,16 @@ import { signupTest } from "./page/signup";
 interface TestSettingParams {
   vendorKey: HostingType;
   serviceGroup: ServiceGroup;
-  testPage: any;
+  playwright: Page;
   report: Report;
   env: "mobile" | "pc";
 }
 
 export const testByVendorKey = async (params: TestSettingParams) => {
-  const { vendorKey, serviceGroup, testPage, report, env } = params;
+  const { vendorKey, serviceGroup, playwright, report, env } = params;
   console.log("🚀 ", serviceGroup.idx, `번 ${vendorKey} 테스트 시작`);
 
-  const test = new SyncTest({ serviceGroup, testPage, env });
+  const test = new SyncTest({ serviceGroup, playwright, env });
 
   //   test.setTestParams(true, true);
   await loginTest(vendorKey, test);

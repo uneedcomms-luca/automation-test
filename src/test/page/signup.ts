@@ -3,19 +3,20 @@ import { SyncTest } from "../../utils/sync-test";
 import { HostingType } from "../../utils/types/hosting";
 
 export const signupTest = async (hosting: HostingType, test: SyncTest) => {
-  test.setTestType("signup");
+  test.setTestPage("signup");
 
-  await test.navigate(HOSTING_URL[hosting].signup);
+  const navigate = await test.navigate(HOSTING_URL[hosting].signup);
+  if (!navigate) return;
 
   // 2. 스크립트 삽입 확인 -> 없으면 끝
   const isKGScriptIncluded = await test.isKGScriptIncluded();
   if (!isKGScriptIncluded) return;
 
-  let isKgElement = await test.isKeepgrowElementPresentNoReport("signup");
+  let isKgElement = await test.isKeepgrowElementPresentNoReport();
   if (!isKgElement) {
     if (hosting === "CAFE24") {
       await test.navigate(HOSTING_URL[hosting].signup2);
-      isKgElement = await test.isKeepgrowElementPresent("signup");
+      isKgElement = await test.isKeepgrowElementPresent();
     }
   }
 
@@ -27,7 +28,7 @@ export const signupTest = async (hosting: HostingType, test: SyncTest) => {
   if (!isInitScriptIncluded) return;
 
   // 3. KG Element 확인 -> 없으면 uiHide 일수도 ?
-  const isKeepgrowElementPresent = await test.isKeepgrowElementPresent("login");
+  const isKeepgrowElementPresent = await test.isKeepgrowElementPresent();
   if (!isKeepgrowElementPresent) return;
 
   // 4. 로그인 버튼 클릭 확인

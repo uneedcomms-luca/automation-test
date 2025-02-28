@@ -1,19 +1,21 @@
+import { Page } from "playwright";
 import { ReportData } from "./report/reportData";
 import { ServiceGroup } from "./types/serviceGroup";
+import { EnvType, TestPageType } from "./types/constants";
 
 export class SyncTest {
   serviceGroup: ServiceGroup;
   reportData: ReportData;
-  page: any;
-  type?: "login" | "signup";
-  env?: "mobile" | "pc";
+  playwright: any;
+  page?: TestPageType;
+  env?: EnvType;
 
   testParams: { init: boolean; default: boolean } = { init: false, default: false };
 
-  constructor({ serviceGroup, testPage, env }: { serviceGroup: ServiceGroup; testPage: any; env: "mobile" | "pc" }) {
+  constructor({ serviceGroup, playwright, env }: { serviceGroup: ServiceGroup; playwright: Page; env: EnvType }) {
     this.serviceGroup = serviceGroup;
     this.reportData = new ReportData(serviceGroup, env);
-    this.page = testPage;
+    this.playwright = playwright;
     this.env = env;
   }
 
@@ -21,9 +23,9 @@ export class SyncTest {
     this.testParams = { init: initParam, default: defaultParam };
   };
 
-  setTestType = (type: "login" | "signup") => {
-    this.type = type;
-    this.reportData.setTestPage(type);
+  setTestPage = (page: TestPageType) => {
+    this.page = page;
+    this.reportData.setTestPage(page);
   };
 
   // 이동
@@ -32,43 +34,56 @@ export class SyncTest {
 
     let targetUrl = "https://" + this.serviceGroup.KGJS_domain + location;
 
-    if (this.testParams.init) {
-      targetUrl += "?kg-kakaosync-init=test";
-      if (this.testParams.default) {
-        targetUrl += "&kg-kakaosync-default=test";
-      }
-    } else {
-      if (this.testParams.default) {
-        targetUrl += "?kg-kakaosync-default=test";
-      }
-    }
+    // if (this.testParams.init) {
+    //   targetUrl += "?kg-kakaosync-init=test";
+    //   if (this.testParams.default) {
+    //     targetUrl += "&kg-kakaosync-default=test";
+    //   }
+    // } else {
+    //   if (this.testParams.default) {
+    //     targetUrl += "?kg-kakaosync-default=test";
+    //   }
+    // }
     try {
-      await this.page.goto(targetUrl);
-      await this.page.waitForTimeout(500);
+      const response = await this.playwright.goto(targetUrl);
+      // 응답이 없거나 HTTP 에러 코드(400 이상)일 경우 처리
+      if (!response || response.status() >= 400) {
+        console.log("⛔️ 없는 도메인 혹은 접근 불가:", targetUrl);
+        this.reportData.addError("navigate", `없는 도메인 또는 접근 불가`);
+        return;
+      }
+      await this.playwright.waitForTimeout(500);
+
       return true;
-    } catch (e) {
-      this.reportData.addError("navigate", e);
+    } catch (e: unknown | any) {
+      this.reportData.addError("navigate", e?.name || e);
     }
   };
 
   // 스크립트 삽입 확인
   isKGScriptIncluded = async () => {
-    // const hosting = this.serviceGroup.vendorKey?.toLowerCase();
     try {
       const targetScripts = [`//storage.keepgrow.com/admin/keepgrow-service/keepgrow-service`];
-      //files.smartskin.co.kr/kakaoSync/cafe24/mobile/kg_kakaoSync_mobile.js
-
-      const inCludescripts = await this.page.evaluate((targetScripts: string[]) => {
-        return targetScripts.every((scriptName: string) => {
-          const res = Array.from(document.querySelectorAll("script[src]"))
-            .map((script) => (script as HTMLScriptElement).src) // src 속성 값 추출
-            .filter((src) => src.includes(scriptName));
-          return res.length > 0;
-        });
-      }, targetScripts);
+      const inCludescripts = await isScriptIncluded(this.playwright, targetScripts);
 
       if (!inCludescripts) {
         this.reportData.addError("service script", "service 스크립트 미삽입");
+        return;
+      }
+      return true;
+    } catch (e) {
+      this.reportData.addError("service script", e);
+    }
+  };
+
+  isTestKGScriptIncluded = async () => {
+    try {
+      const targetScripts = [`//storage.keepgrow.com/admin/keepgrow-service/test/keepgrow-service`];
+
+      const inCludescripts = await isScriptIncluded(this.playwright, targetScripts);
+
+      if (!inCludescripts) {
+        this.reportData.addError("test service script", "테스트 service 스크립트 미삽입");
         return;
       }
       return true;
@@ -86,14 +101,7 @@ export class SyncTest {
         `//storage.keepgrow.com/admin/kakaosync/${hosting}/kg_kakaosync`
       ];
 
-      const inCludescripts = await this.page.evaluate((targetScripts: string[]) => {
-        return targetScripts.some((scriptName: string) => {
-          const res = Array.from(document.querySelectorAll("script[src]"))
-            .map((script) => (script as HTMLScriptElement).src) // src 속성 값 추출
-            .filter((src) => src.includes(scriptName));
-          return res.length > 0;
-        });
-      }, targetScripts);
+      const inCludescripts = await isScriptIncluded(this.playwright, targetScripts);
 
       if (!inCludescripts) {
         this.reportData.addError("init Script", "init 스크립트 미삽입 - inactive");
@@ -105,24 +113,35 @@ export class SyncTest {
     }
   };
 
-  isKeepgrowElementPresentNoReport = async (testType: string) => {
+  isKeepgrowElementPresentNoReport = async () => {
     this.reportData.log("kgElement no report");
     try {
-      const isElementPresent = (await this.page.$("#KG_section")) !== null;
+      const isElementPresent = (await this.playwright.$("#KG_section")) !== null;
       if (isElementPresent) return true;
     } catch (e) {
       this.reportData.addError("kgElement", e);
     }
   };
-  isKeepgrowElementPresent = async (testType: string) => {
+  isKeepgrowElementPresent = async () => {
     this.reportData.log("kgElement");
     try {
-      const isElementPresent = (await this.page.$("#KG_section")) !== null;
-      if (isElementPresent) return true;
+      const element = await this.playwright.waitForSelector("#KG_section", { timeout: 5000 });
+      // const isElementPresent = (await this.playwright.$("#KG_section")) !== null;
+      if (element) return true;
       this.reportData.addError("kgElement", "No matching elements found.");
     } catch (e) {
-      console.log("🔴", "no KGElement in", testType);
+      console.log("🔴", "no KGElement");
       this.reportData.addError("kgElement", e);
+    }
+  };
+  isFooterPresent = async () => {
+    this.reportData.log("footer");
+    try {
+      const element = await this.playwright.waitForSelector("#KG_footer", { timeout: 5000 });
+      if (element) return true;
+      this.reportData.addError("footer", "No matching elements found.");
+    } catch (e) {
+      this.reportData.addError("footer", e);
     }
   };
 
@@ -139,7 +158,7 @@ export class SyncTest {
 
       //files.smartskin.co.kr/kakaoSync/cafe24/mobile/kg_kakaoSync_mobile.js
 
-      const inCludescripts = await this.page.evaluate((targetScripts: string[]) => {
+      const inCludescripts = await this.playwright.evaluate((targetScripts: string[]) => {
         return targetScripts.every((scriptName: string) => {
           const res = Array.from(document.querySelectorAll("script[src]"))
             .map((script) => (script as HTMLScriptElement).src) // src 속성 값 추출
@@ -158,8 +177,8 @@ export class SyncTest {
 
   screenshot = async () => {
     try {
-      this.reportData.log(this.type + "-screenshot");
-      await this.page.screenshot({ path: this.reportData.getScreenShotPath() });
+      this.reportData.log(this.page + "-screenshot");
+      await this.playwright.screenshot({ path: this.reportData.getScreenShotPath() });
     } catch (e) {
       this.reportData.addError("screenshot", e);
     }
@@ -182,18 +201,45 @@ export class SyncTest {
         kakaoLoginSelector = "#kakaoLogin > div > a.btn.btnKakao";
       }
 
-      // await this.page.waitForSelector(kakaoLoginSelector);
+      // await this.playwright.waitForSelector(kakaoLoginSelector);
 
-      await this.page.click(kakaoLoginSelector);
-      await this.page.waitForLoadState("networkidle");
+      await this.playwright.click(kakaoLoginSelector);
+      await this.playwright.waitForLoadState("networkidle");
 
-      const currentUrl = this.page.url();
+      const currentUrl = this.playwright.url();
 
       if (!successUrls.some((url) => currentUrl.includes(url))) {
         this.reportData.addError("kakaoLogin", "kakao login failed");
       }
-    } catch (e) {
-      this.reportData.addError("kakaoLogin", e);
+    } catch (e: unknown | any) {
+      this.reportData.addError("kakaoLogin", e?.name || e);
     }
   };
+
+  isNoMemberLinkPresent = async () => {
+    try {
+      this.reportData.log("noMemberLink");
+      const noMemberLinkSelector = "a:text('비회원 구매')";
+      const element = await this.playwright.waitForSelector(noMemberLinkSelector, { timeout: 5000 });
+      console.log("🟢", "noMemberLink", element);
+      if (!element) {
+        this.reportData.addError("noMemberLink", "No matching elements found.");
+      }
+      return true;
+    } catch (e: unknown | any) {
+      this.reportData.addError("noMemberLink", e?.name || e);
+    }
+    return false;
+  };
 }
+
+const isScriptIncluded = async (playwright: any, targetScripts: string[]) => {
+  return await playwright.evaluate((targetScripts: string[]) => {
+    return targetScripts.some((scriptName: string) => {
+      const res = Array.from(document.querySelectorAll("script[src]"))
+        .map((script) => (script as HTMLScriptElement).src) // src 속성 값 추출
+        .filter((src) => src.includes(scriptName));
+      return res.length > 0;
+    });
+  }, targetScripts);
+};

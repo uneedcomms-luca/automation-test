@@ -1,4 +1,4 @@
-const callUntilResponse = async (fn: () => Promise<boolean>, maxAttempts = 30, delay = 5000) => {
+const callUntilResponse = async (fn: () => Promise<boolean>, maxAttempts = 30, delay = 2000) => {
   let count = 0;
 
   while (count < maxAttempts) {
